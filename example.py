@@ -1,7 +1,7 @@
-from centrifuge import Centrifuge
+from chromatography import Chromatography
 import svgwrite
 
-c = Centrifuge("test.jpg")
+c = Chromatography("test.jpg")
 palette = c.get_palette(4)
 
 def render_palette(centroids):

@@ -14,7 +14,7 @@ class Cluster(object):
 		return min(self.pixels, key=lambda pixel: sq_euclidian_distance(mean_value, pixel))
 
 
-class Centrifuge(object):
+class Chromatography(object):
 	def __init__(self, image_name):
 		self.img = Image.open(image_name)
 		self.scale_image()
