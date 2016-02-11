@@ -1,14 +1,8 @@
-from chromatography import Chromatography
+from chromatography import Chromatography, bright_pixel
 import svgwrite
-from colorsys import rgb_to_hsv
-
-def valid_pixel(pixel):
-	if rgb_to_hsv(pixel[0]/255, pixel[1]/255, pixel[2]/255)[1] + rgb_to_hsv(pixel[0]/255, pixel[1]/255, pixel[2]/255)[2] < 1.2:
-		return False
-	return True
 
 c = Chromatography("test.jpg")
-palette = c.get_palette(5, valid_pixel)
+palette = c.get_palette(20, bright_pixel)
 
 def render_palette(centroids):
 	dwg = svgwrite.Drawing("out.svg",

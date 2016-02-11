@@ -1,11 +1,18 @@
 from PIL import Image
 from random import sample
+from colorsys import rgb_to_hsv
 
 class NotEnoughValidPixelsError(Exception):
 	pass
 
 def sq_euclidian_distance(pixel1, pixel2):
 	return sum([(pixel1[i]-pixel2[i])**2 for i in [0, 1, 2]])
+
+def bright_pixel(pixel):
+	(h, s, v) = rgb_to_hsv(pixel[0]/255, pixel[1]/255, pixel[2]/255)
+	if s + v > 1.2:
+		return True
+	return False
 
 class Cluster(object):
 	def __init__(self, centroid):
@@ -35,13 +42,14 @@ class Chromatography(object):
 		# Not enough pixels to sample the initial centroids from
 		except ValueError:
 			raise NotEnoughValidPixelsError
-			
+
 		while True:
 			new_centroids = self.new_centroids(centroids)
 			if sum([sq_euclidian_distance(a, b) for (a, b) in zip(centroids, new_centroids)]) < 10:
 				break
 			print(centroids)
 			centroids = new_centroids
+		# TODO: Sort centroids
 		return centroids
 
 	def new_centroids(self, centroids):
