@@ -10,15 +10,9 @@ class Cluster(object):
 		self.pixels = []
 
 	def get_mean(self):
-		# TODO: Less ugly
-		r_cum, g_cum, b_cum = 0,0,0
-		for pixel in self.pixels:
-			r_cum += pixel[0]
-			g_cum += pixel[1]
-			b_cum += pixel[2]
-		total = len(self.pixels)
-		mean_value = (r_cum/total, g_cum/total, b_cum/total)
+		mean_value = tuple([sum(x)/len(self.pixels) for x in zip(*self.pixels)])
 		return min(self.pixels, key=lambda pixel: sq_euclidian_distance(mean_value, pixel))
+
 
 class Centrifuge(object):
 	def __init__(self, image_name):
@@ -33,6 +27,7 @@ class Centrifuge(object):
 	def get_palette(self, k=4):
 		# TODO: Pick the initial centroids in a better way
 		centroids = sample(self.pixels, k)
+		# TODO: Completion condition
 		for i in range(20):
 			centroids = self.new_centroids(centroids)
 			print(centroids)
