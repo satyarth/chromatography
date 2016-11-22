@@ -2,6 +2,9 @@ from PIL import Image
 from random import sample
 from colorsys import rgb_to_hsv
 
+class InputError(Exception):
+	pass
+
 class ChromatographyException(Exception):
 	pass
 
@@ -34,15 +37,24 @@ class Cluster(object):
 
 
 class Chromatography(object):
-	def __init__(self, image_name):
-		self.img = Image.open(image_name)
+	def __init__(self, img):
+		if isinstance(img, Image.Image): # Input is a instance of the PIL Image class
+			self.img = img
+			
+		elif isinstance(img, str):	# Input is a string pointing to an image file
+			self.img = Image.open(img)
+
+		else:
+			raise InputError("Argument must be an instance of PIL's Image class or the path to an image")
+
 		self.scale_image()
 		
 	def scale_image(self):
 		(height, width) = self.img.size
 		target_area = 10000
-		ratio = (height*width/target_area)
-		self.img = self.img.resize((int(height/ratio), int(width/ratio)), Image.ANTIALIAS)
+		if height * width > target_area:
+			ratio = (height*width/target_area)
+			self.img = self.img.resize((int(height/ratio), int(width/ratio)), Image.ANTIALIAS)
 
 	def get_palette(self, k=4, filter_pixels=None):
 		all_pixels = list(self.img.getdata())
@@ -73,7 +85,6 @@ class Chromatography(object):
 	def sort_centroids(self, centroids):
 		clusters = [Cluster(c) for c in centroids]
 		sorted_clusters = sorted(clusters, key=lambda c: sum([sq_euclidian_distance(c.centroid, centroid)*c.size() for centroid in centroids]))
-		# sorted_clusters = sorted(clusters, key=lambda c: c.size())
 		return [c.centroid for c in sorted_clusters]
 
 	def new_centroids(self, centroids):
